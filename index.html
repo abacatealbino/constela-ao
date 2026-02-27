@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Qual é a constelação do seu nome?</title>
+<title>Qual a constelação do seu nome?</title>
 
 <style>
 body {
@@ -12,32 +12,23 @@ body {
   font-family: Georgia, serif;
   color: white;
   display: flex;
-  flex-direction: row;
   height: 100vh;
 }
 
+/* FUNDO */
 canvas {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 0;
+  z-index: -1;
 }
 
+/* ÁREA PRINCIPAL */
 .main {
   flex: 2;
-  position: relative;
-  z-index: 2;
   text-align: center;
   margin-top: 18vh;
-}
-
-.lateral {
-  flex: 1;
-  padding: 40px;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(5px);
   z-index: 2;
-  overflow-y: auto;
 }
 
 input {
@@ -59,19 +50,34 @@ button:active {
   transform: scale(0.95);
 }
 
+/* PAINEL LATERAL */
+.lateral {
+  flex: 1;
+  padding: 40px;
+  background: rgba(255,255,255,0.08);
+  border-left: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  overflow-y: auto;
+}
+
+.lateral h2 {
+  margin-top: 0;
+}
+
 .assinatura {
   margin-top: 40px;
   font-size: 14px;
   opacity: 0.7;
 }
 
-/* Responsivo */
+/* RESPONSIVO */
 @media (max-width: 768px) {
   body {
     flex-direction: column;
   }
   .lateral {
-    padding: 20px;
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,0.2);
   }
 }
 </style>
@@ -91,14 +97,13 @@ button:active {
 <div class="lateral">
   <h2>Sobre as Constelações</h2>
   <p>
-  Desde a antiguidade, as constelações eram formas encontradas pelo ser humano
-  para dar sentido ao caos do céu. Aqui, cada nome reorganiza estrelas através
-  de padrões matemáticos. Não é destino — é geometria transformada em poesia.
+  Desde a antiguidade, as pessoas conectam estrelas para criar significado.
+  Aqui acontece algo semelhante: cada letra do seu nome possui um código
+  numérico que é transformado em coordenadas no espaço.
   </p>
   <p>
-  Cada letra possui um código numérico. Esse código define posições no espaço,
-  criando uma constelação única. Assim como no céu real, o significado nasce
-  da interpretação.
+  Não é destino nem magia — é matemática convertida em desenho.
+  Assim como no céu real, o sentido nasce da interpretação.
   </p>
 
   <div class="assinatura">
@@ -117,9 +122,32 @@ function ajustarTela() {
 window.addEventListener("resize", ajustarTela);
 ajustarTela();
 
+/* Fundo estrelado */
+let estrelas = [];
+
+for (let i = 0; i < 300; i++) {
+  estrelas.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    tamanho: Math.random() * 2
+  });
+}
+
+function desenharFundo() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "white";
+  for (let e of estrelas) {
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.tamanho, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 function gerar() {
   const nome = document.getElementById("nome").value;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  desenharFundo();
 
   let pontos = [];
 
@@ -151,6 +179,8 @@ function gerar() {
   document.getElementById("mensagem").innerText =
     nome + ", o céu se reorganizou só para você.";
 }
+
+desenharFundo();
 </script>
 
 </body>
