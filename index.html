@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constelação do Nome</title>
+<title>Qual é a constelaçao do seu nome?</title>
 
 <style>
 body {
@@ -23,51 +23,46 @@ canvas {
   z-index: -1;
 }
 
-/* ÁREA PRINCIPAL */
+/* PRINCIPAL */
 .main {
   flex: 1;
   text-align: center;
-  margin-top: 18vh;
+  margin-top: 20vh;
   padding: 20px;
 }
 
 input {
-  padding: 12px;
+  padding: 10px;
   border-radius: 20px;
   border: none;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 button {
-  padding: 12px 25px;
+  padding: 10px 20px;
   border-radius: 20px;
   border: none;
   cursor: pointer;
   margin-left: 10px;
+  background: white;
 }
 
 button:active {
   transform: scale(0.95);
 }
 
-/* LATERAL MENOR E MAIS ORGANIZADA */
+/* LATERAL */
 .lateral {
-  width: 260px;
+  width: 240px;
   padding: 25px;
   background: rgba(255,255,255,0.05);
   border-left: 1px solid rgba(255,255,255,0.15);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
-.lateral h2 {
-  margin-top: 0;
-  font-size: 16px;
-  font-weight: normal;
-}
-
 .assinatura {
-  margin-top: 30px;
+  margin-top: 25px;
   font-size: 12px;
   opacity: 0.6;
 }
@@ -99,13 +94,10 @@ button:active {
 </div>
 
 <div class="lateral">
-  <h2>Sobre</h2>
   <p>
-  Cada letra do seu nome é transformada em um número.
-  Esse número vira uma cordenada, uma posição no espaço.
-  Aqui, números viram estrelas e letras viram caminhos no céu.
-  O significado não está nas estrelas está em quem observa.
-  O desenho final é único como uma constelação pessoal.
+  Cada letra vira número.  
+  Cada número vira uma coordenada, uma posição no espaço.  
+  Seu nome cria um desenho único no céu.
   </p>
 
   <div class="assinatura">
@@ -124,32 +116,45 @@ function ajustarTela() {
 window.addEventListener("resize", ajustarTela);
 ajustarTela();
 
-/* Fundo estrelado */
+/* ESTRELAS LENTAS */
 let estrelas = [];
 
-for (let i = 0; i < 250; i++) {
+for (let i = 0; i < 200; i++) {
   estrelas.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    tamanho: Math.random() * 2
+    velocidade: Math.random() * 0.3 + 0.1,
+    tamanho: Math.random() * 1.5
   });
 }
 
-function desenharFundo() {
+function animarFundo() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = "white";
+
   for (let e of estrelas) {
+    e.y += e.velocidade;
+
+    if (e.y > canvas.height) {
+      e.y = 0;
+      e.x = Math.random() * canvas.width;
+    }
+
     ctx.beginPath();
     ctx.arc(e.x, e.y, e.tamanho, 0, Math.PI * 2);
     ctx.fill();
   }
+
+  requestAnimationFrame(animarFundo);
 }
 
+animarFundo();
+
+/* CONSTELAÇÃO SUAVE */
 function gerar() {
   const nome = document.getElementById("nome").value;
-  desenharFundo();
 
   let pontos = [];
 
@@ -160,29 +165,45 @@ function gerar() {
     pontos.push({x, y});
   }
 
-  ctx.shadowBlur = 15;
-  ctx.shadowColor = "white";
-  ctx.strokeStyle = "white";
-  ctx.fillStyle = "white";
+  let opacidade = 0;
 
-  for (let i = 0; i < pontos.length; i++) {
-    ctx.beginPath();
-    ctx.arc(pontos[i].x, pontos[i].y, 5, 0, Math.PI * 2);
-    ctx.fill();
+  function desenharConstelacao() {
+    if (opacidade < 1) {
+      opacidade += 0.02;
+    }
 
-    if (i > 0) {
+    ctx.save();
+    ctx.globalAlpha = opacidade;
+    ctx.strokeStyle = "white";
+    ctx.fillStyle = "white";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "white";
+
+    for (let i = 0; i < pontos.length; i++) {
       ctx.beginPath();
-      ctx.moveTo(pontos[i-1].x, pontos[i-1].y);
-      ctx.lineTo(pontos[i].x, pontos[i].y);
-      ctx.stroke();
+      ctx.arc(pontos[i].x, pontos[i].y, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (i > 0) {
+        ctx.beginPath();
+        ctx.moveTo(pontos[i-1].x, pontos[i-1].y);
+        ctx.lineTo(pontos[i].x, pontos[i].y);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+
+    if (opacidade < 1) {
+      requestAnimationFrame(desenharConstelacao);
     }
   }
 
-  document.getElementById("mensagem").innerText =
-    nome + ", sua constelação foi revelada.";
-}
+  desenharConstelacao();
 
-desenharFundo();
+  document.getElementById("mensagem").innerText =
+    nome + ", sua constelação surgiu lentamente no céu.";
+}
 </script>
 
 </body>
