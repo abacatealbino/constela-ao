@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constelação do Nome</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: Georgia, serif;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      margin-top: 20vh;
+    }
+
+    input {
+      padding: 12px;
+      border-radius: 20px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 25px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="container">
+  <h1>Descubra sua constelação</h1>
+  <input type="text" id="nome" placeholder="Digite seu nome">
+  <button onclick="gerar()">Gerar</button>
+  <p id="mensagem"></p>
+</div>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  function ajustarTela() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", ajustarTela);
+  ajustarTela();
+
+  function gerar() {
+    const nome = document.getElementById("nome").value;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let pontos = [];
+
+    for (let i = 0; i < nome.length; i++) {
+      let codigo = nome.charCodeAt(i);
+      let x = (codigo * 7) % canvas.width;
+      let y = (codigo * 13) % canvas.height;
+      pontos.push({x, y});
+    }
+
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "white";
+
+    for (let i = 0; i < pontos.length; i++) {
+      ctx.beginPath();
+      ctx.arc(pontos[i].x, pontos[i].y, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (i > 0) {
+        ctx.beginPath();
+        ctx.moveTo(pontos[i-1].x, pontos[i-1].y);
+        ctx.lineTo(pontos[i].x, pontos[i].y);
+        ctx.stroke();
+      }
+    }
+
+    document.getElementById("mensagem").innerText =
+      nome + ", sua luz desenha o céu.";
+  }
+</script>
+
+</body>
+</html>
