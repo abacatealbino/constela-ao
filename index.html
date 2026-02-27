@@ -3,28 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constelação do Nome</title>
+<title>Qual é a constelação do seu nome?</title>
 
 <style>
 body {
   margin: 0;
   background: black;
-  overflow: hidden;
   font-family: Georgia, serif;
   color: white;
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
 }
 
 canvas {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 0;
 }
 
-.container {
+.main {
+  flex: 2;
   position: relative;
   z-index: 2;
+  text-align: center;
   margin-top: 18vh;
+}
+
+.lateral {
+  flex: 1;
+  padding: 40px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(5px);
+  z-index: 2;
+  overflow-y: auto;
 }
 
 input {
@@ -46,8 +59,20 @@ button:active {
   transform: scale(0.95);
 }
 
-h1 {
-  font-weight: normal;
+.assinatura {
+  margin-top: 40px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+  .lateral {
+    padding: 20px;
+  }
 }
 </style>
 </head>
@@ -56,11 +81,29 @@ h1 {
 
 <canvas id="canvas"></canvas>
 
-<div class="container">
+<div class="main">
   <h1>Descubra sua constelação</h1>
   <input type="text" id="nome" placeholder="Digite seu nome">
   <button onclick="gerar()">Gerar</button>
   <p id="mensagem"></p>
+</div>
+
+<div class="lateral">
+  <h2>Sobre as Constelações</h2>
+  <p>
+  Desde a antiguidade, as constelações eram formas encontradas pelo ser humano
+  para dar sentido ao caos do céu. Aqui, cada nome reorganiza estrelas através
+  de padrões matemáticos. Não é destino — é geometria transformada em poesia.
+  </p>
+  <p>
+  Cada letra possui um código numérico. Esse código define posições no espaço,
+  criando uma constelação única. Assim como no céu real, o significado nasce
+  da interpretação.
+  </p>
+
+  <div class="assinatura">
+    kat garota de programa
+  </div>
 </div>
 
 <script>
@@ -74,33 +117,9 @@ function ajustarTela() {
 window.addEventListener("resize", ajustarTela);
 ajustarTela();
 
-/* Fundo estrelado */
-let estrelas = [];
-
-for (let i = 0; i < 300; i++) {
-  estrelas.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    tamanho: Math.random() * 2
-  });
-}
-
-function desenharFundo() {
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "white";
-  for (let e of estrelas) {
-    ctx.beginPath();
-    ctx.arc(e.x, e.y, e.tamanho, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-/* Constelação */
 function gerar() {
   const nome = document.getElementById("nome").value;
-  desenharFundo();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   let pontos = [];
 
@@ -132,8 +151,6 @@ function gerar() {
   document.getElementById("mensagem").innerText =
     nome + ", o céu se reorganizou só para você.";
 }
-
-desenharFundo();
 </script>
 
 </body>
